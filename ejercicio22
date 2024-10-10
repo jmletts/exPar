@@ -1,0 +1,65 @@
+#include <iostream>
+using namespace std;
+
+const int FILAS = 6;
+const int COLUMNAS = 6;
+
+// Función para verificar si una posición tiene una mina
+bool esMina(char tablero[FILAS][COLUMNAS], int fila, int col) {
+    return tablero[fila][col] == '*';
+}
+
+// Función para contar las minas alrededor de una celda
+int contarMinas(char tablero[FILAS][COLUMNAS], int fila, int col) {
+    int contador = 0;
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            int nuevaFila = fila + i;
+            int nuevaCol = col + j;
+            if (nuevaFila >= 0 && nuevaFila < FILAS && nuevaCol >= 0 && nuevaCol < COLUMNAS) {
+                if (esMina(tablero, nuevaFila, nuevaCol)) {
+                    contador++;
+                }
+            }
+        }
+    }
+    return contador;
+}
+
+// Función para mostrar el tablero
+void mostrarTablero(char tablero[FILAS][COLUMNAS]) {
+    for (int i = 0; i < FILAS; i++) {
+        for (int j = 0; j < COLUMNAS; j++) {
+            cout << tablero[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Función para llenar el tablero con números y minas
+void generarTablero(char tablero[FILAS][COLUMNAS]) {
+    // Primero, colocamos las minas
+    tablero[0][1] = '*';
+    tablero[1][3] = '*';
+    tablero[2][0] = '*';
+    tablero[3][2] = '*';
+    tablero[5][1] = '*';
+    tablero[5][4] = '*';
+
+    // Luego llenamos el resto del tablero con números
+    for (int i = 0; i < FILAS; i++) {
+        for (int j = 0; j < COLUMNAS; j++) {
+            if (tablero[i][j] != '*') {
+                int minasAlrededor = contarMinas(tablero, i, j);
+                tablero[i][j] = minasAlrededor + '0'; // Convertir el número a carácter
+            }
+        }
+    }
+}
+
+int main() {
+    char tablero[FILAS][COLUMNAS] = { {'0'} }; // Inicializamos el tablero con ceros
+    generarTablero(tablero);
+    mostrarTablero(tablero);
+    return 0;
+}
