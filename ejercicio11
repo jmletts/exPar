@@ -1,0 +1,99 @@
+#include <iostream>
+
+using namespace std;
+
+const int MAX = 3;  // Cantidad de productos
+int clientesS = 0;
+double sumas[2] = {0, 0}; // suma 1 = descuentos, suma 2 = montoTotal
+
+struct producto {
+    string nombre;
+    int stock;
+    double precio;
+    double descuento;
+};
+
+void setProducto(int indice, producto productos[]);
+double MontoPagar(int compra, producto productos);
+void displayReporte(producto *productos); // Usamos puntero aquí
+int Option();
+
+int main() {
+    producto productos[MAX] = {
+        {"Television", 200, 3500.00, 0.10},
+        {"Celular", 1500, 2500.00, 0.20},
+        {"Equipo", 150, 1600.00, 0.15}
+    };
+
+    int m = Option();
+    switch (m) {
+    case 1:
+        int op;
+        cout << "Ingrese el tipo de productos" << endl;
+        cout << "[0] Television" << endl;
+        cout << "[1] Celulares" << endl;
+        cout << "[2] Equipo" << endl;   // Cambiamos las opciones para que coincidan con los índices del arreglo
+        cin >> op;
+
+        if (op >= 0 && op < MAX) {  // Ahora los índices y las opciones coinciden
+            setProducto(op, productos);
+        } else {
+            cout << "Opción inválida" << endl;
+        }
+        break;
+    case 2:
+        displayReporte(productos); // Pasamos la dirección del arreglo
+        break;
+    }
+
+    return 0;
+}
+
+void setProducto(int indice, producto productos[]) {
+    int compra;
+    cout << "Ingrese la cantidad a comprar de " << productos[indice].nombre << endl;
+    cin >> compra;
+
+    if (compra > productos[indice].stock) {
+        cout << "Stock insuficiente." << endl;
+        return;
+    }
+
+    productos[indice].stock -= compra;
+    double totalPagar = MontoPagar(compra, productos[indice]);
+    double descuentoAplicado = (compra * productos[indice].precio) - totalPagar;
+
+    sumas[1] += totalPagar;
+    sumas[0] += descuentoAplicado;
+    clientesS++;
+
+    cout << "Monto a pagar: " << totalPagar << endl;
+    cout << "Stock actual de " << productos[indice].nombre << ": " << productos[indice].stock << endl;
+}
+
+double MontoPagar(int compra, producto productos) {
+    double montoBruto = compra * productos.precio;
+    double descuento = montoBruto * productos.descuento;
+    return montoBruto - descuento;
+}
+
+void displayReporte(producto *productos) { // Recibe un puntero a productos
+    cout << "Cantidad de Clientes atendidos: " << clientesS << endl;
+    cout << "Descuentos otorgados: " << sumas[0] << endl;
+    cout << "Stock de cada producto:" << endl;
+
+    for (int i = 0; i < MAX; i++) {
+        cout << (productos + i)->nombre << ": " << (productos + i)->stock << endl;
+    }
+
+    cout << "Monto Total vendido: " << sumas[1] << endl;
+}
+
+int Option() {
+    int n;
+    cout << "Ingrese una opcion" << endl;
+    cout << "[1] Registro de Ventas" << endl;
+    cout << "[2] Reporte de Ventas" << endl;
+    cin >> n;
+    return n;
+}
